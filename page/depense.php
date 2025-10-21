@@ -1,8 +1,8 @@
 <?php
 include_once '../includes/function.php';
-$reponse = $_POST["selected_table"];
-$table = afficher_table($reponse);
-$tableaux = afficher_tableaux($table);
+$tables_list =  afficherDepense()   ;
+$table = afficher_liste($tables_list);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,11 +10,9 @@ $tableaux = afficher_tableaux($table);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/style3.css">
-    <title>Document</title>
+    <title>liste tableaux</title>
 </head>
 <body>
-    <?php echo $tableaux;
-    
-    ?>
+    <?php echo $table; ?>
 </body>
-</html> 
+</html>

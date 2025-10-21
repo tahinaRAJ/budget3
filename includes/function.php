@@ -161,5 +161,17 @@ function afficherRecette()
     }
     return $tables;
 }
-
+function afficherDepense()
+{
+    $connect = dbconnect();
+    $requete = "SHOW TABLES LIKE '%depense%'";
+    $result = mysqli_query($connect, $requete);
+    $tables = [];
+    if ($result) {
+        while ($row = mysqli_fetch_array($result)) {
+            $tables[] = $row[0];
+        }
+    }
+    return $tables;
+}
 ?>
