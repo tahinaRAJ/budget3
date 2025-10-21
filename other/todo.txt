@@ -40,6 +40,11 @@ page :
     -tableau.php:
         -Affichage de la liste des tableaux
         -Creation de lien vers detail.php pour chaque tableau
-    -detail.php:
-         -affichage du tableau correspondant au lien utilisé
+    -Evolution.php:
+        -affichage du tableau d'évolution des dépenses et des depenses_soldes
+    -Repartition.php
+        -affichage du tableau de répartition du budget
+    -Composition.php
+        -affichage du tableau des données
+    
         
