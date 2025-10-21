@@ -22,15 +22,6 @@
     <main>
         <h1>Sommaire Page</h1>
         <div class="content">
-            <a href="tableaux.php"><p>liste des tableaux</p></a>
-        </div>
-        <div class="content">
-            <a href="figure.php"><p>liste des figures</p></a>
-        </div>
-        <div class="content">
-            <a href="perspective.php"><p>Perspective economique</p></a>
-        </div>
-        <div class="content">
             <a href="RecList.php"><p>Recettes</p></a>
         </div>
          <div class="content">
@@ -38,9 +29,6 @@
         </div>
          <div class="content">
             <a href="Deficit.php"><p>Deficit budgetaire</p></a>
-        </div>
-        <div class="content">
-            <a href="extrait_de_disposition.php"><p>Extrait de disposition fiscale et douaniere</p></a>
         </div>
     </main>
 </body>
