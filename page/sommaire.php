@@ -15,8 +15,7 @@
             <li><a href="tableaux.php"></a></li>
             <li><a href="figure.php"></a></li>
             <li><a href="Recettes.php"></a></li>
-            <li><a href="depenses.php"></a></li>
-            <li><a href="deficites.php"></a></li>
+            <li><a href="Ventilation.php"></a></li>
             <li><a href="extrait_de_disposition.php"></a></li>
         </nav>
     </header>
@@ -32,10 +31,10 @@
             <a href="perspective.php"><p>Perspective economique</p></a>
         </div>
         <div class="content">
-            <p>Recetttes</p>
+            <a href="RecList.php"><p>Recettes</p></a>
         </div>
          <div class="content">
-            <a href="RecList.php"><p>Depenses</p></a>
+            <a href="Ventilation.php"><p>Depenses</p></a>
         </div>
          <div class="content">
             <a href="Deficit.php"><p>Deficit budgetaire</p></a>
