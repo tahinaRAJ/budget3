@@ -1,0 +1,45 @@
+page : 
+    -connexion.php:
+        connexion à la base de données
+    -function.php:
+        creations de fonctions
+    -base.sql :
+        -- TODO : Créer la table ls_tableau
+            - Ajouter les tables :
+                - previsions_macroeconomiques
+                - croissance_sectorielle
+                - recettes_fiscales
+                - recettes_douanieres
+                - recettes_non_fiscales
+                - composition_dons
+                - depenses_par_rubrique
+                - depenses_soldes
+                - depenses_fonctionnement
+                - budget_rattachement
+
+        -- TODO : Créer la table ls_figures
+            - Ajouter les figures :
+                - evolution_croissance_sectorielle
+                - recettes_totales
+                - evolution_recettes_fiscales_douanieres
+                - investissements_publics
+          --TODO :
+            -Logo BDC 
+            -button vers sommaire.php
+    -sommaire.php : 
+        -Liste des ministaire = click vers budget et recettes
+        -Liste des recettes des ministaire
+        -Liste des figures  des ministaire
+        -Liste des tableaux  des ministaire
+    -style.css:
+        css pour la page sommaire.php
+    -style2.css:
+        css pour la page index.php
+    style3.css:
+        css pour la page tableaux.php
+    -tableau.php:
+        -Affichage de la liste des tableaux
+        -Creation de lien vers detail.php pour chaque tableau
+    -detail.php:
+         -affichage du tableau correspondant au lien utilisé
+        

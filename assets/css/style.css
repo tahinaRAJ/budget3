@@ -1,0 +1,306 @@
+/* style.css */
+/* ================================================================index.css================================================================ */
+/* style.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  line-height: 1.6;
+  padding: 0;
+  margin: 0;
+}
+
+header {
+  width: 100%;
+  background: linear-gradient(135deg, #007e3a 0%, #005a2b 100%);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logos {
+  width: 120px;
+  height: 60px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 2px solid #fc3d32;
+}
+
+.logos img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+nav li {
+  list-style: none;
+}
+
+nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+nav a:hover {
+  background-color: #fc3d32;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(252, 61, 50, 0.3);
+}
+
+/* Adding icons to navigation using pseudo-elements */
+nav li:nth-child(1) a::before {
+  content: "📊";
+}
+
+nav li:nth-child(2) a::before {
+  content: "📈";
+}
+
+nav li:nth-child(3) a::before {
+  content: "ℹ️";
+}
+
+nav li:nth-child(4) a::before {
+  content: "🔭";
+}
+
+nav li:nth-child(5) a::before {
+  content: "💰";
+}
+
+nav li:nth-child(6) a::before {
+  content: "💸";
+}
+
+nav li:nth-child(7) a::before {
+  content: "⚠️";
+}
+
+nav li:nth-child(8) a::before {
+  content: "📑";
+}
+
+nav li:nth-child(9) a::before {
+  content: "🔤";
+}
+
+nav li:nth-child(10) a::before {
+  content: "📚";
+}
+
+main {
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+h1 {
+  color: #007e3a;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  border-bottom: 3px solid #fc3d32;
+  padding-bottom: 0.5rem;
+}
+
+.content {
+  background-color: #f8f9fa;
+  border-left: 5px solid #007e3a;
+  padding: 1.5rem;
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(252, 61, 50, 0.1),
+    transparent
+  );
+  transition: all 0.6s;
+}
+
+.content:hover::before {
+  left: 100%;
+}
+
+.content:hover {
+  transform: translateX(8px);
+  box-shadow: 0 5px 15px rgba(0, 126, 58, 0.2);
+  border-left-color: #fc3d32;
+}
+
+.content p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+/* Adding icons to content items */
+.content:nth-child(2)::after {
+  content: "📊";
+  font-size: 1.5rem;
+  color: #007e3a;
+}
+
+.content:nth-child(3)::after {
+  content: "📈";
+  font-size: 1.5rem;
+  color: #007e3a;
+}
+
+.content:nth-child(4)::after {
+  content: "ℹ️";
+  font-size: 1.5rem;
+  color: #007e3a;
+}
+
+.content:nth-child(5)::after {
+  content: "🔭";
+  font-size: 1.5rem;
+  color: #007e3a;
+}
+
+.content:nth-child(6)::after {
+  content: "💰";
+  font-size: 1.5rem;
+  color: #007e3a;
+}
+
+.content:nth-child(7)::after {
+  content: "💸";
+  font-size: 1.5rem;
+  color: #007e3a;
+}
+
+.content:nth-child(8)::after {
+  content: "⚠️";
+  font-size: 1.5rem;
+  color: #007e3a;
+}
+
+.content:nth-child(9)::after {
+  content: "📑";
+  font-size: 1.5rem;
+  color: #007e3a;
+}
+
+.content:nth-child(10)::after {
+  content: "🔤";
+  font-size: 1.5rem;
+  color: #007e3a;
+}
+
+.content:nth-child(11)::after {
+  content: "📚";
+  font-size: 1.5rem;
+  color: #007e3a;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  nav a {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .content {
+    padding: 1rem;
+  }
+
+  .content p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logos {
+    width: 100px;
+    height: 50px;
+  }
+
+  nav {
+    gap: 0.3rem;
+  }
+
+  nav a {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .content {
+    padding: 0.8rem;
+  }
+
+  .content p {
+    font-size: 0.9rem;
+  }
+}
+/*=================================================================sommaire.php===============================================================*/
