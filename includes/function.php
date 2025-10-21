@@ -148,4 +148,18 @@ function split_name($nom) {
     return $base_name;
 }
 
+function afficherRecette()
+{
+    $connect = dbconnect();
+    $requete = "SHOW TABLES LIKE 'recettes%'";
+    $result = mysqli_query($connect, $requete);
+    $tables = [];
+    if ($result) {
+        while ($row = mysqli_fetch_array($result)) {
+            $tables[] = $row[0];
+        }
+    }
+    return $tables;
+}
+
 ?>

@@ -1,6 +1,6 @@
 <?php
 include_once '../includes/function.php';
-$tables_list = ls_tableaux();
+$tables_list = afficherRecette();
 $table = afficher_liste($tables_list);
 
 ?>
