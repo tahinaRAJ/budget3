@@ -56,15 +56,22 @@ function afficher_liste($tables)
     $output .= '<div class="table-grid">';
 
     foreach ($tables as $table) {
-        $output .= '<div class="table-card">';
-        $output .= '<div class="table-icon">🇲🇬</div>';
-        $output .= '<h3>' . htmlspecialchars($table) . '</h3>';
-        $output .= '<form method="POST" class="view-form">';
-        $output .= '<input type="hidden" name="selected_table" value="' . htmlspecialchars($table) . '">';
-        $output .= '<button type="submit" class="view-btn">Voir le contenu</button>';
-        $output .= '</form>';
-        $output .= '</div>';
-    }
+    $file_name1 = split_name($table);
+    $file_name = htmlspecialchars($file_name1) . '.php'; // dynamic PHP file name
+
+    $output .= '<div class="table-card">';
+    $output .= '<div class="table-icon">🇲🇬</div>';
+    $output .= '<h3>' . htmlspecialchars($table) . '</h3>';
+
+    // form now points directly to the table-specific PHP file
+    $output .= '<form method="POST" action="' . $file_name . '">';
+    $output .= '<input type="hidden" name="selected_table" value="' . htmlspecialchars($table) . '">';
+    $output .= '<button type="submit" class="view-btn">Voir le contenu</button>';
+    $output .= '</form>';
+
+    $output .= '</div>';
+}
+
 
     $output .= '</div>';
     $output .= '</div>';
@@ -121,4 +128,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_table'])) {
     $selected_table = $_POST['selected_table'];
     $selected_table_data = afficher_table($selected_table);
 }
+function split_name($nom) {
+    static $used_names = []; // stores previously used names
+    $parts = explode('_', $nom);
+    $base_name = ucfirst($parts[0]);
+
+    // If name has been used before, increment counter
+    if (isset($used_names[$base_name])) {
+        $used_names[$base_name]++;
+    } else {
+        $used_names[$base_name] = 1;
+    }
+
+    // Add number if it’s not the first occurrence
+    if ($used_names[$base_name] > 1) {
+        return $base_name . $used_names[$base_name];
+    }
+
+    return $base_name;
+}
+
 ?>
