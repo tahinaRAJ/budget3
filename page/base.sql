@@ -209,7 +209,7 @@ INSERT INTO recapitulatif_des_depenses_de_fonctionnement (poste_depense, montant
 ('TOTAL', 3068.0, 2304.3, -763.7, '');
 
 -- Creation de la table 10
-CREATE TABLE  Répartition_du_budget_par_rattachement_administratif (
+CREATE TABLE  Repartition_du_budget_par_rattachement_administratif (
     id INT AUTO_INCREMENT PRIMARY KEY,
     institution_ministere VARCHAR(150) NOT NULL,
     lf_2024 DECIMAL(15,2),
@@ -218,7 +218,7 @@ CREATE TABLE  Répartition_du_budget_par_rattachement_administratif (
 );
 
 -- Insertion des donnees pour les institutions et ministères
-INSERT INTO Répartition_du_budget_par_rattachement_administratif (institution_ministere, lf_2024, lf_2025, type_entite) VALUES
+INSERT INTO Repartition_du_budget_par_rattachement_administratif (institution_ministere, lf_2024, lf_2025, type_entite) VALUES
 ('Presidence de la Republique', 177.1, 224.7, 'Institution'),
 ('Senat', 22.1, 21.3, 'Institution'),
 ('Assemblee Nationale', 87.4, 85.9, 'Institution'),

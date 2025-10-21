@@ -14,14 +14,10 @@
         <nav>
             <li><a href="tableaux.php"></a></li>
             <li><a href="figure.php"></a></li>
-            <li><a href="propos.php"></a></li>
-            <li><a href="perspective.php"></a></li>
             <li><a href="Recettes.php"></a></li>
             <li><a href="depenses.php"></a></li>
             <li><a href="deficites.php"></a></li>
             <li><a href="extrait_de_disposition.php"></a></li>
-            <li><a href="acronymes.php"></a></li>
-            <li><a href="Glossaires.php"></a></li>
         </nav>
     </header>
     <main>
@@ -31,9 +27,6 @@
         </div>
         <div class="content">
             <a href="figure.php"><p>liste des figures</p></a>
-        </div>
-        <div class="content">
-            <a href="http:propos.php"><p>Avant propos</p></a>
         </div>
         <div class="content">
             <a href="perspective.php"><p>Perspective economique</p></a>
@@ -49,12 +42,6 @@
         </div>
         <div class="content">
             <a href="extrait_de_disposition"><p>Extrait de disposition fiscale et douaniere</p></a>
-        </div>
-        <div class="content">
-            <a href="acronymes.php"><p>Acronyme</p></a>
-        </div>
-        <div class="content">
-            <a href="Glossaires.php"><p>Glossaire</p></a>
         </div>
     </main>
 </body>
