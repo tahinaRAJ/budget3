@@ -35,13 +35,13 @@
             <p>Recetttes</p>
         </div>
          <div class="content">
-            <a href="Recettes.php"><p>Depenses</p></a>
+            <a href="RecList.php"><p>Depenses</p></a>
         </div>
          <div class="content">
-            <a href=""><p>Deficit budgetaire</p></a>
+            <a href="Deficit.php"><p>Deficit budgetaire</p></a>
         </div>
         <div class="content">
-            <a href="extrait_de_disposition"><p>Extrait de disposition fiscale et douaniere</p></a>
+            <a href="extrait_de_disposition.php"><p>Extrait de disposition fiscale et douaniere</p></a>
         </div>
     </main>
 </body>
