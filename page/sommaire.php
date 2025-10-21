@@ -14,19 +14,11 @@
         <nav>
             <li><a href="tableaux.php"></a></li>
             <li><a href="figure.php"></a></li>
-            <li><a href="Recettes.php"></a></li>
-            <li><a href="Ventilation.php"></a></li>
-            <li><a href="extrait_de_disposition.php"></a></li>
+            <li><a href="RecList.php"></a></li>
         </nav>
     </header>
     <main>
-        <h1>Sommaire Page</h1>
-        <div class="content">
-            <a href="tableaux.php"><p>liste des tableaux</p></a>
-        </div>
-        <div class="content">
-            <a href="figure.php"><p>liste des figures</p></a>
-        </div>
+        <h1>Recapitulatif du budget </h1>
         <div class="content">
             <a href="perspective.php"><p>Perspective economique</p></a>
         </div>
