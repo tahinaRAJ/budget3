@@ -46,5 +46,14 @@ page :
         -affichage du tableau de répartition du budget
     -Composition.php
         -affichage du tableau des données
+    -Prevision.php
+        -affichage du tableau des prévisions
+    -Recettes.php (1,2et3)
+        -affichage des tableaux de recettes (correspondant a chaque tableau de la liste)
+    -Recapitulatif.php
+        -affichage du tableau concernant le bilan des dépenses
+    -Taux.php
+        -affichage des taux de croissance par secteur
+    -Ventilation.php
+        -affichage des dépenses par rubique et leur recettes_totales
     
-        
