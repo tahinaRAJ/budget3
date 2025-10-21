@@ -24,7 +24,7 @@ function afficher_table($reponse)
 function ls_tableaux()
 {
     $connect = dbconnect();
-    $requete = "SHOW TABLES";
+    $requete = "SHOW TABLES WHERE Tables_in_bdc NOT LIKE 'view_%'";
     $result = mysqli_query($connect, $requete);
     $tables = [];
     if ($result) {
