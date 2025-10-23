@@ -1,5 +1,24 @@
+
 <?php
 include_once '../config/connection.php';
+
+function get_colonnes_depense($table) {
+    $map = [
+        'ventilation_depenses_par_rubique' => ['lfr2024', 'lf2025'],
+        'evolution_des_depenses_des_soldes' => ['lf_2024', 'lf_2025'],
+        'recapitulatif_des_depenses_de_fonctionnement' => ['montant_2024', 'montant_2025'],
+        'Repartition_du_budget_par_rattachement_administratif' => ['lf_2024', 'lf_2025'],
+    ];
+    // gestion des variations de casse
+    foreach ($map as $key => $cols) {
+        if (strtolower($key) === strtolower($table)) {
+            return $cols;
+        }
+    }
+    return null;
+}
+
+
 
 function afficher_table($reponse)
 {
@@ -148,10 +167,65 @@ function split_name($nom) {
     return $base_name;
 }
 
-function afficherRecette()
-{
+
+
+function get_total_table($table, $col1, $col2) {
     $connect = dbconnect();
-    $requete = "SHOW TABLES LIKE 'recettes%'";
+    $total1 = 0;
+    $total2 = 0;
+    // On cherche la colonne qui contient le mot 'categorie' ou 'type' ou 'poste' ou 'nature' (pour les totaux)
+    $columns = [];
+    $res = $connect->query("SHOW COLUMNS FROM `$table`");
+    if ($res) {
+        while ($row = $res->fetch_assoc()) {
+            $columns[] = $row['Field'];
+        }
+    }
+    $cat_col = null;
+    foreach ($columns as $col) {
+        if (stripos($col, 'categorie') !== false || stripos($col, 'type') !== false || stripos($col, 'poste') !== false || stripos($col, 'nature') !== false) {
+            $cat_col = $col;
+            break;
+        }
+    }
+    if ($cat_col) {
+        $sql = "SELECT `$col1`, `$col2` FROM `$table` WHERE `$cat_col` LIKE 'Total' OR `$cat_col` LIKE 'TOTAL' LIMIT 1";
+        $res = $connect->query($sql);
+        if ($res && $row = $res->fetch_assoc()) {
+            $total1 = floatval($row[$col1]);
+            $total2 = floatval($row[$col2]);
+        }
+    }
+    return [$total1, $total2];
+}
+
+function get_totaux_tables($tables, $col1 = null, $col2 = null, $type = 'recette') {
+    $total1 = 0;
+    $total2 = 0;
+    if (!is_array($tables)) return [0, 0];
+    foreach ($tables as $table) {
+        if ($type === 'depense') {
+            $cols = get_colonnes_depense($table);
+            if ($cols) {
+                list($c1, $c2) = $cols;
+                list($t1, $t2) = get_total_table($table, $c1, $c2);
+                $total1 += $t1;
+                $total2 += $t2;
+            }
+        } else {
+            if ($col1 && $col2) {
+                list($t1, $t2) = get_total_table($table, $col1, $col2);
+                $total1 += $t1;
+                $total2 += $t2;
+            }
+        }
+    }
+    return [$total1, $total2];
+}
+
+function afficherRecette() {
+    $connect = dbconnect();
+    $requete = "SHOW TABLES WHERE Tables_in_bdc LIKE '%recette%'";
     $result = mysqli_query($connect, $requete);
     $tables = [];
     if ($result) {
@@ -162,4 +236,17 @@ function afficherRecette()
     return $tables;
 }
 
+// Fonction pour obtenir la liste des tables de dépenses (ventilation)
+function afficherDepense() {
+    $connect = dbconnect();
+    $requete = "SHOW TABLES WHERE Tables_in_bdc LIKE '%depense%'";
+    $result = mysqli_query($connect, $requete);
+    $tables = [];
+    if ($result) {
+        while ($row = mysqli_fetch_array($result)) {
+            $tables[] = $row[0];
+        }
+    }
+    return $tables;
+}
 ?>

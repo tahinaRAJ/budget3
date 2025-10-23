@@ -22,10 +22,31 @@
     <main>
         <h1>Sommaire Page</h1>
         <div class="content">
-            <a href="RecList.php"><p>Recettes</p></a>
+            <?php
+            include_once '../includes/function.php';
+            $tables = afficherRecette();
+            list($total2024, $total2025) = get_totaux_tables($tables, 'lf_2024', 'lf_2025');
+            ?>
+            <a href="RecList.php">
+                <p>Recettes</p>
+                <div class="totaux">
+                    <span>Total 2024 : <b><?= number_format($total2024, 2, ',', ' ') ?></b> MGA</span><br>
+                    <span>Total 2025 : <b><?= number_format($total2025, 2, ',', ' ') ?></b> MGA</span>
+                </div>
+            </a>
         </div>
-         <div class="content">
-            <a href="Ventilation.php"><p>Depenses</p></a>
+        <div class="content">
+            <?php
+            $tables_dep = afficherDepense();
+            list($total_dep_2024, $total_dep_2025) = get_totaux_tables($tables_dep, null, null, 'depense');
+            ?>
+            <a href="Ventilation.php">
+                <p>Dépenses</p>
+                <div class="totaux">
+                    <span>Total 2024 : <b><?= number_format($total_dep_2024, 2, ',', ' ') ?></b> MGA</span><br>
+                    <span>Total 2025 : <b><?= number_format($total_dep_2025, 2, ',', ' ') ?></b> MGA</span>
+                </div>
+            </a>
         </div>
          <div class="content">
             <a href="Deficit.php"><p>Deficit budgetaire</p></a>
