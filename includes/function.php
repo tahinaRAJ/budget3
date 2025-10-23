@@ -235,11 +235,18 @@ function afficherRecette() {
     }
     return $tables;
 }
+<<<<<<< HEAD
 
 // Fonction pour obtenir la liste des tables de dépenses (ventilation)
 function afficherDepense() {
     $connect = dbconnect();
     $requete = "SHOW TABLES WHERE Tables_in_bdc LIKE '%depense%'";
+=======
+function afficherDepense()
+{
+    $connect = dbconnect();
+    $requete = "SHOW TABLES LIKE '%depense%'";
+>>>>>>> da775923f7b34987187cbd166b5b2f7819233b1f
     $result = mysqli_query($connect, $requete);
     $tables = [];
     if ($result) {

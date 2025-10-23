@@ -14,13 +14,14 @@
         <nav>
             <li><a href="tableaux.php"></a></li>
             <li><a href="figure.php"></a></li>
-            <li><a href="Recettes.php"></a></li>
-            <li><a href="Ventilation.php"></a></li>
-            <li><a href="extrait_de_disposition.php"></a></li>
+            <li><a href="RecList.php"></a></li>
         </nav>
     </header>
     <main>
-        <h1>Sommaire Page</h1>
+        <h1>Recapitulatif du budget </h1>
+        <div class="content">
+            <a href="perspective.php"><p>Perspective economique</p></a>
+        </div>
         <div class="content">
             <?php
             include_once '../includes/function.php';
@@ -35,6 +36,7 @@
                 </div>
             </a>
         </div>
+<<<<<<< HEAD
         <div class="content">
             <?php
             $tables_dep = afficherDepense();
@@ -47,9 +49,16 @@
                     <span>Total 2025 : <b><?= number_format($total_dep_2025, 2, ',', ' ') ?></b> MGA</span>
                 </div>
             </a>
+=======
+         <div class="content">
+            <a href="depense.php"><p>Depenses</p></a>
+>>>>>>> da775923f7b34987187cbd166b5b2f7819233b1f
         </div>
          <div class="content">
             <a href="Deficit.php"><p>Deficit budgetaire</p></a>
+        </div>
+        <div class="content">
+            <a href="extrait_de_disposition.php"><p>Extrait de disposition fiscale et douaniere</p></a>
         </div>
     </main>
 </body>
