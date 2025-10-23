@@ -20,9 +20,6 @@
     <main>
         <h1>Recapitulatif du budget </h1>
         <div class="content">
-            <a href="perspective.php"><p>Perspective economique</p></a>
-        </div>
-        <div class="content">
             <?php
             include_once '../includes/function.php';
             $tables = afficherRecette();
@@ -31,12 +28,11 @@
             <a href="RecList.php">
                 <p>Recettes</p>
                 <div class="totaux">
-                    <span>Total 2024 : <b><?= number_format($total2024, 2, ',', ' ') ?></b> MGA</span><br>
-                    <span>Total 2025 : <b><?= number_format($total2025, 2, ',', ' ') ?></b> MGA</span>
+                    <span>Total 2024 : <b><?= number_format($total2024, 2, ',', ' ') ?></b> milliards MGA</span><br>
+                    <span>Total 2025 : <b><?= number_format($total2025, 2, ',', ' ') ?></b> milliards MGA</span>
                 </div>
             </a>
         </div>
-<<<<<<< HEAD
         <div class="content">
             <?php
             $tables_dep = afficherDepense();
@@ -45,20 +41,13 @@
             <a href="Ventilation.php">
                 <p>Dépenses</p>
                 <div class="totaux">
-                    <span>Total 2024 : <b><?= number_format($total_dep_2024, 2, ',', ' ') ?></b> MGA</span><br>
-                    <span>Total 2025 : <b><?= number_format($total_dep_2025, 2, ',', ' ') ?></b> MGA</span>
+                    <span>Total 2024 : <b><?= number_format($total_dep_2024, 2, ',', ' ') ?></b> milliards MGA</span><br>
+                    <span>Total 2025 : <b><?= number_format($total_dep_2025, 2, ',', ' ') ?></b> milliards MGA</span>
                 </div>
             </a>
-=======
-         <div class="content">
-            <a href="depense.php"><p>Depenses</p></a>
->>>>>>> da775923f7b34987187cbd166b5b2f7819233b1f
         </div>
          <div class="content">
             <a href="Deficit.php"><p>Deficit budgetaire</p></a>
-        </div>
-        <div class="content">
-            <a href="extrait_de_disposition.php"><p>Extrait de disposition fiscale et douaniere</p></a>
         </div>
     </main>
 </body>
