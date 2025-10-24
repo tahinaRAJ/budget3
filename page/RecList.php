@@ -1,60 +1,168 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
 include_once '../includes/function.php';
 $tables_list = afficherRecette();
-$connect = dbconnect();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/css/style3.css">
-    <title>liste tableaux</title>
+    <link rel="stylesheet" href="../assets/css/depense_RecList.css">
+    <title>Liste des Recettes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
 </head>
 <body>
-    <h1>Liste des Recettes</h1>
-    <div class="recette-list">
-        <?php foreach ($tables_list as $table): ?>
-            <?php
-                // Colonnes pour chaque table de recettes selon la base
-                $map = [
-                    'recettes_fiscales_interieures' => ['lf_2024', 'lf_2025', 'categorie'],
-                    'recettes_douanieres' => ['lf_2024', 'lf_2025', 'categorie'],
-                    'recettes_non_fiscales' => ['lf_2024', 'lf_2025', 'categorie'],
-                    'composition_des_dons' => ['lf_2024', 'lf_2025', 'categorie'],
-                ];
-                $t2024 = $t2025 = 0;
-                $cat_col = null;
-                $col1 = $col2 = null;
-                foreach ($map as $key => $cols) {
-                    if (strtolower($key) === strtolower($table)) {
-                        $col1 = $cols[0];
-                        $col2 = $cols[1];
-                        $cat_col = $cols[2];
-                        break;
-                    }
-                }
-                if ($col1 && $col2 && $cat_col) {
-                    $sql = "SELECT `$col1` as t2024, `$col2` as t2025 FROM `$table` WHERE `$cat_col` LIKE 'Total' OR `$cat_col` LIKE 'TOTAL' LIMIT 1";
-                    $res = $connect->query($sql);
-                    if ($res && $row = $res->fetch_assoc()) {
-                        $t2024 = floatval($row['t2024']);
-                        $t2025 = floatval($row['t2025']);
-                    }
-                }
-                $file_name = htmlspecialchars(split_name($table)) . '.php';
-            ?>
-            <div class="recette-item">
-                <form method="POST" action="<?= $file_name ?>">
-                    <input type="hidden" name="selected_table" value="<?= htmlspecialchars($table) ?>">
-                    <button type="submit" class="view-btn">
-                        <b><?= htmlspecialchars($table) ?></b> :
-                        2024 = <span><?= number_format($t2024, 2, ',', ' ') ?></span> milliards MGA |
-                        2025 = <span><?= number_format($t2025, 2, ',', ' ') ?></span> milliards MGA
-                    </button>
-                </form>
+    <!-- HEADER GOUVERNEMENTAL -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logos">
+                <a href="sommaire.php"><img src="../image/logos.png" alt="Logo Gouvernement" class="logo-img"></a>
+                <div class="logo-glow"></div>
             </div>
-        <?php endforeach; ?>
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="RecList.php" class="nav-link">
+                            <span class="nav-text">Recettes</span>
+                            <span class="nav-arrow">→</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="depense.php" class="nav-link">
+                            <span class="nav-text">Dépenses</span>
+                            <span class="nav-arrow">→</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Deficit.php" class="nav-link">
+                            <span class="nav-text">Déficit</span>
+                            <span class="nav-arrow">→</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Liste des Recettes</h1>
+            <div class="title-underline"></div>
+            <p class="page-subtitle">Vue d'ensemble des différentes catégories de recettes budgétaires</p>
+        </div>
+
+        <div class="list-container">
+            <div class="list-items">
+                <?php foreach ($tables_list as $table): ?>
+                    <?php
+                    // UNE SEULE LIGNE POUR TOUT CALCULER !
+                    $totals = get_totals_recettes_simple($table);
+                    $file_name = htmlspecialchars(split_name($table)) . '.php';
+                    $variation = ($totals[1] - $totals[0]) / $totals[0] * 100;
+                    $max_value = max($totals[0], $totals[1]);
+                    $progress_2024 = ($totals[0] / $max_value) * 100;
+                    $progress_2025 = ($totals[1] / $max_value) * 100;
+                    ?>
+                    <div class="list-item">
+                        <form method="POST" action="<?= $file_name ?>" class="item-form">
+                            <input type="hidden" name="selected_table" value="<?= htmlspecialchars($table) ?>">
+                            <button type="submit" class="view-btn">
+                                <div class="item-header">
+                                    <div class="item-name"><?= htmlspecialchars($table) ?></div>
+                                    <div class="item-icon"><i class="fas fa-arrow-right"></i></div>
+                                </div>
+                                
+                                <div class="item-details">
+                                    <div class="year-data">
+                                        <div class="year-item">
+                                            <div class="year-label">2024</div>
+                                            <div class="year-amount recette"><?= number_format($totals[0], 2, ',', ' ') ?> Mds MGA</div>
+                                        </div>
+                                        <div class="year-item">
+                                            <div class="year-label">2025</div>
+                                            <div class="year-amount recette"><?= number_format($totals[1], 2, ',', ' ') ?> Mds MGA</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="item-footer">
+                                        <div class="variation <?= $variation >= 0 ? 'positive' : 'negative' ?>">
+                                            <i class="fas fa-arrow-<?= $variation >= 0 ? 'up' : 'down' ?>"></i>
+                                            <span><?= number_format(abs($variation), 1) ?>%</span>
+                                        </div>
+                                        <div class="view-text">
+                                            <span>Voir le détail</span>
+                                            <i class="fas fa-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="progress-container">
+                                    <div class="progress-bar recette" style="width: <?= $progress_2025 ?>%"></div>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </main>
+
+    <!-- ÉLÉMENTS FLOTTANTS POUR L'ESTHÉTIQUE -->
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
     </div>
+
+    <script>
+        // Animation pour les montants
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation de comptage pour les montants
+            const amountElements = document.querySelectorAll('.year-amount');
+            
+            amountElements.forEach(element => {
+                const originalText = element.textContent;
+                const amount = parseFloat(originalText.replace(/\s/g, '').replace(',', '.'));
+                
+                if (!isNaN(amount)) {
+                    // Animation de comptage
+                    let current = 0;
+                    const increment = amount / 30;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= amount) {
+                            current = amount;
+                            clearInterval(timer);
+                        }
+                        element.textContent = new Intl.NumberFormat('fr-FR', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }).format(current) + ' Mds MGA';
+                    }, 50);
+                }
+            });
+
+            // Effet de parallaxe pour les éléments flottants
+            document.addEventListener('mousemove', function(e) {
+                const floatingElements = document.querySelectorAll('.floating-element');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                floatingElements.forEach((element, index) => {
+                    const speed = (index + 1) * 0.5;
+                    const xMove = x * speed * 100;
+                    const yMove = y * speed * 100;
+                    
+                    element.style.transform = `translate(${xMove}px, ${yMove}px)`;
+                });
+            });
+        });
+    </script>
 </body>
 </html>

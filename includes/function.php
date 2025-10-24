@@ -1,27 +1,209 @@
-
 <?php
-include_once '../config/connection.php';
+include_once 'connection.php';
 
-function get_colonnes_depense($table) {
-    $map = [
-        'ventilation_depenses_par_rubique' => ['lfr2024', 'lf2025'],
-        'evolution_des_depenses_des_soldes' => ['lf_2024', 'lf_2025'],
-        'recapitulatif_des_depenses_de_fonctionnement' => ['montant_2024', 'montant_2025'],
-        'Repartition_du_budget_par_rattachement_administratif' => ['lf_2024', 'lf_2025'],
-    ];
-    // gestion des variations de casse
-    foreach ($map as $key => $cols) {
-        if (strtolower($key) === strtolower($table)) {
-            return $cols;
+// ============================================================================
+// FONCTIONS DE BASE ET GÉNÉRIQUES
+// ============================================================================
+
+function ls_tableaux() {
+    $connect = dbconnect();
+    $requete = "SHOW TABLES WHERE Tables_in_bdc NOT LIKE 'view_%'";
+    $result = mysqli_query($connect, $requete);
+    $tables = [];
+    if ($result) {
+        while ($row = mysqli_fetch_array($result)) {
+            $tables[] = $row[0];
         }
     }
-    return null;
+    return $tables;
 }
 
+function afficherRecette() {
+    $connect = dbconnect();
+    $requete = "SHOW TABLES WHERE Tables_in_bdc LIKE '%recette%'";
+    $result = mysqli_query($connect, $requete);
+    $tables = [];
+    if ($result) {
+        while ($row = mysqli_fetch_array($result)) {
+            $tables[] = $row[0];
+        }
+    }
+    return $tables;
+}
 
+function afficherDepense() {
+    $connect = dbconnect();
+    $requete = "SHOW TABLES WHERE Tables_in_bdc LIKE '%depense%'";
+    $result = mysqli_query($connect, $requete);
+    $tables = [];
+    if ($result) {
+        while ($row = mysqli_fetch_array($result)) {
+            $tables[] = $row[0];
+        }
+    }
+    return $tables;
+}
+function split_name($nom) {
+    static $used_names = [];
+    $parts = explode('_', $nom);
+    $base_name = ucfirst($parts[0]);
 
-function afficher_table($reponse)
-{
+    if (isset($used_names[$base_name])) {
+        $used_names[$base_name]++;
+    } else {
+        $used_names[$base_name] = 1;
+    }
+
+    if ($used_names[$base_name] > 1) {
+        return $base_name . $used_names[$base_name];
+    }
+
+    return $base_name;
+}
+
+// ============================================================================
+// FONCTIONS DE CALCUL DES TOTAUX
+// ============================================================================
+
+function get_totals_recettes_simple($table) {
+    $connect = dbconnect();
+    
+    // TOUTES LES TABLES DE RECETTES ONT LA MÊME STRUCTURE
+    $col2024 = 'lf_2024';
+    $col2025 = 'lf_2025';
+    
+    // REQUÊTE SPÉCIFIQUE POUR LES RECETTES - cherche la ligne "Total"
+    $sql = "SELECT `$col2024`, `$col2025` FROM `$table` WHERE categorie LIKE 'Total' OR categorie LIKE 'TOTAL' LIMIT 1";
+    $res = $connect->query($sql);
+    
+    if ($res && $row = $res->fetch_assoc()) {
+        return [
+            floatval($row[$col2024] ?? 0),
+            floatval($row[$col2025] ?? 0)
+        ];
+    }
+    
+    return [0, 0];
+}
+
+function get_totals_tres_simple($table) {
+    // VÉRIFIER QUE $table EST BIEN UNE CHAÎNE
+    if (!is_string($table)) {
+        return [0, 0];
+    }
+    
+    $connect = dbconnect();
+    
+    // DÉTERMINER LES COLONNES SELON LE NOM DE LA TABLE
+    if (strpos($table, 'evolution') !== false) {
+        $col2024 = 'lf_2024';
+        $col2025 = 'lf_2025';
+    } else if (strpos($table, 'recapitulatif') !== false) {
+        $col2024 = 'montant_2024';
+        $col2025 = 'montant_2025';
+    } else if (strpos($table, 'ventilation') !== false) {
+        $col2024 = 'lfr2024';
+        $col2025 = 'lf2025';
+    } else {
+        $col2024 = 'montant_2024';
+        $col2025 = 'montant_2025';
+    }
+    
+    // REQUÊTE SIMPLE
+    $sql = "SELECT $col2024, $col2025 FROM `$table` ORDER BY id DESC LIMIT 1";
+    $res = $connect->query($sql);
+    
+    if ($res && $row = $res->fetch_assoc()) {
+        return [
+            floatval($row[$col2024]),
+            floatval($row[$col2025])
+        ];
+    }
+    
+    return [0, 0];
+}
+
+function get_totaux_tables($table) {
+    // Utilise la fonction qui existe déjà
+    return get_totals_tres_simple($table);
+}
+
+// ============================================================================
+// FONCTIONS DE CALCUL GLOBAUX
+// ============================================================================
+
+function calculer_total_recettes() {
+    $recettes = afficherRecette();
+    $total_2024 = 0;
+    $total_2025 = 0;
+
+    foreach ($recettes as $table) {
+        $totals = get_totals_recettes_simple($table);
+        $total_2024 += $totals[0] ?? 0;
+        $total_2025 += $totals[1] ?? 0;
+    }
+
+    return [
+        '2024' => $total_2024,
+        '2025' => $total_2025
+    ];
+}
+
+function calculer_total_depenses() {
+    $depenses = afficherDepense();
+    $total_2024 = 0;
+    $total_2025 = 0;
+
+    foreach ($depenses as $table) {
+        $totals = get_totals_tres_simple($table);
+        $total_2024 += $totals[0] ?? 0;
+        $total_2025 += $totals[1] ?? 0;
+    }
+
+    return [
+        '2024' => $total_2024,
+        '2025' => $total_2025
+    ];
+}
+
+function calculer_deficit_complet() {
+    $recettes = afficherRecette();
+    $depenses = afficherDepense();
+    
+    $total_rec_2024 = 0;
+    $total_rec_2025 = 0;
+    $total_dep_2024 = 0;
+    $total_dep_2025 = 0;
+
+    // TOTAL RECETTES - utilise la fonction pour les recettes
+    foreach ($recettes as $table) {
+        $totals = get_totals_recettes_simple($table);
+        $total_rec_2024 += $totals[0] ?? 0;
+        $total_rec_2025 += $totals[1] ?? 0;
+    }
+
+    // TOTAL DÉPENSES - utilise la fonction pour les dépenses
+    foreach ($depenses as $table) {
+        $totals = get_totals_tres_simple($table);
+        $total_dep_2024 += $totals[0] ?? 0;
+        $total_dep_2025 += $totals[1] ?? 0;
+    }
+
+    return [
+        'recettes_2024' => $total_rec_2024,
+        'recettes_2025' => $total_rec_2025,
+        'depenses_2024' => $total_dep_2024,
+        'depenses_2025' => $total_dep_2025,
+        'deficit_2024' => $total_rec_2024 - $total_dep_2024,
+        'deficit_2025' => $total_rec_2025 - $total_dep_2025
+    ];
+}
+
+// ============================================================================
+// FONCTIONS D'AFFICHAGE
+// ============================================================================
+
+function afficher_table($reponse) {
     $connect = dbconnect();
     // Valider le nom de la table pour éviter les injections SQL
     $allowed_tables = ls_tableaux();
@@ -40,213 +222,5 @@ function afficher_table($reponse)
     return $table;
 }
 
-function ls_tableaux()
-{
-    $connect = dbconnect();
-    $requete = "SHOW TABLES WHERE Tables_in_bdc NOT LIKE 'view_%'";
-    $result = mysqli_query($connect, $requete);
-    $tables = [];
-    if ($result) {
-        while ($row = mysqli_fetch_array($result)) {
-            $tables[] = $row[0];
-        }
-    }
-    return $tables;
-}
 
-function afficher_liste($tables)
-{
-    if (empty($tables)) {
-        return '<p class="no-data">Aucune table trouvée dans la base de données.</p>';
-    }
-
-    $output = '<div class="container">';
-    $output .= '<div class="malagasy-header">';
-    $output .= '<div class="flag-banner">';
-    $output .= '<div class="flag-strip red"></div>';
-    $output .= '<div class="flag-strip white"></div>';
-    $output .= '<div class="flag-strip green"></div>';
-    $output .= '</div>';
-    $output .= '<h1>Tables Disponibles</h1>';
-    $output .= '<p class="subtitle">Sélectionnez une table pour voir son contenu</p>';
-    $output .= '</div>';
-    
-    $output .= '<div class="table-list">';
-    $output .= '<div class="table-grid">';
-
-    foreach ($tables as $table) {
-    $file_name1 = split_name($table);
-    $file_name = htmlspecialchars($file_name1) . '.php'; // dynamic PHP file name
-
-    $output .= '<div class="table-card">';
-    $output .= '<div class="table-icon">🇲🇬</div>';
-    $output .= '<h3>' . htmlspecialchars($table) . '</h3>';
-
-    // form now points directly to the table-specific PHP file
-    $output .= '<form method="POST" action="' . $file_name . '">';
-    $output .= '<input type="hidden" name="selected_table" value="' . htmlspecialchars($table) . '">';
-    $output .= '<button type="submit" class="view-btn">Voir le contenu</button>';
-    $output .= '</form>';
-
-    $output .= '</div>';
-}
-
-
-    $output .= '</div>';
-    $output .= '</div>';
-    $output .= '</div>';
-    return $output;
-}
-function afficher_tableaux($table)
-{
-    if (empty($table)) {
-        return '<p class="no-data">Aucune donnée à afficher.</p>';
-    }
-
-    $output = '<div class="data-container">';
-    $output .= '<div class="table-header">';
-    $output .= '<h2>Contenu de la Table</h2>';
-    $output .= '<span class="row-count">' . count($table) . ' enregistrement(s)</span>';
-    $output .= '</div>';
-
-    $output .= '<div class="table-wrapper">';
-    $output .= '<table class="data-table">';
-
-    // En-têtes du tableau
-    if (!empty($table[0])) {
-        $output .= '<thead><tr>';
-        foreach (array_keys($table[0]) as $column) {
-            $output .= '<th>' . htmlspecialchars($column) . '</th>';
-        }
-        $output .= '</tr></thead>';
-    }
-
-    // Données du tableau
-    $output .= '<tbody>';
-    foreach ($table as $row) {
-        $output .= '<tr>';
-        foreach ($row as $cell) {
-            $output .= '<td>' . htmlspecialchars($cell) . '</td>';
-        }
-        $output .= '</tr>';
-    }
-    $output .= '</tbody>';
-
-    $output .= '</table>';
-    $output .= '</div>';
-    $output .= '</div>';
-
-    return $output;
-}
-
-// Exécution principale
-$tables_list = ls_tableaux();
-$selected_table_data = [];
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_table'])) {
-    $selected_table = $_POST['selected_table'];
-    $selected_table_data = afficher_table($selected_table);
-}
-function split_name($nom) {
-    static $used_names = []; // stores previously used names
-    $parts = explode('_', $nom);
-    $base_name = ucfirst($parts[0]);
-
-    // If name has been used before, increment counter
-    if (isset($used_names[$base_name])) {
-        $used_names[$base_name]++;
-    } else {
-        $used_names[$base_name] = 1;
-    }
-
-    // Add number if it’s not the first occurrence
-    if ($used_names[$base_name] > 1) {
-        return $base_name . $used_names[$base_name];
-    }
-
-    return $base_name;
-}
-
-
-
-function get_total_table($table, $col1, $col2) {
-    $connect = dbconnect();
-    $total1 = 0;
-    $total2 = 0;
-    // On cherche la colonne qui contient le mot 'categorie' ou 'type' ou 'poste' ou 'nature' (pour les totaux)
-    $columns = [];
-    $res = $connect->query("SHOW COLUMNS FROM `$table`");
-    if ($res) {
-        while ($row = $res->fetch_assoc()) {
-            $columns[] = $row['Field'];
-        }
-    }
-    $cat_col = null;
-    foreach ($columns as $col) {
-        if (stripos($col, 'categorie') !== false || stripos($col, 'type') !== false || stripos($col, 'poste') !== false || stripos($col, 'nature') !== false) {
-            $cat_col = $col;
-            break;
-        }
-    }
-    if ($cat_col) {
-        $sql = "SELECT `$col1`, `$col2` FROM `$table` WHERE `$cat_col` LIKE 'Total' OR `$cat_col` LIKE 'TOTAL' LIMIT 1";
-        $res = $connect->query($sql);
-        if ($res && $row = $res->fetch_assoc()) {
-            $total1 = floatval($row[$col1]);
-            $total2 = floatval($row[$col2]);
-        }
-    }
-    return [$total1, $total2];
-}
-
-function get_totaux_tables($tables, $col1 = null, $col2 = null, $type = 'recette') {
-    $total1 = 0;
-    $total2 = 0;
-    if (!is_array($tables)) return [0, 0];
-    foreach ($tables as $table) {
-        if ($type === 'depense') {
-            $cols = get_colonnes_depense($table);
-            if ($cols) {
-                list($c1, $c2) = $cols;
-                list($t1, $t2) = get_total_table($table, $c1, $c2);
-                $total1 += $t1;
-                $total2 += $t2;
-            }
-        } else {
-            if ($col1 && $col2) {
-                list($t1, $t2) = get_total_table($table, $col1, $col2);
-                $total1 += $t1;
-                $total2 += $t2;
-            }
-        }
-    }
-    return [$total1, $total2];
-}
-
-function afficherRecette() {
-    $connect = dbconnect();
-    $requete = "SHOW TABLES WHERE Tables_in_bdc LIKE '%recette%'";
-    $result = mysqli_query($connect, $requete);
-    $tables = [];
-    if ($result) {
-        while ($row = mysqli_fetch_array($result)) {
-            $tables[] = $row[0];
-        }
-    }
-    return $tables;
-}
-
-// Fonction pour obtenir la liste des tables de dépenses (ventilation)
-function afficherDepense() {
-    $connect = dbconnect();
-    $requete = "SHOW TABLES WHERE Tables_in_bdc LIKE '%depense%'";
-    $result = mysqli_query($connect, $requete);
-    $tables = [];
-    if ($result) {
-        while ($row = mysqli_fetch_array($result)) {
-            $tables[] = $row[0];
-        }
-    }
-    return $tables;
-}
 ?>
